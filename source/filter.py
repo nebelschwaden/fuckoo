@@ -19,28 +19,55 @@ def list_tocsv(filepath, list, name):
 
 ##########################################Save to CSV################################################
 #network
-#dict_list_tocsv('./raw/network/udp/udp_raw.csv',data['network']['udp']) #udp
-#dict_list_tocsv('./raw/network/tcp/tcp_raw.csv',data['network']['tcp']) #tcp
-#list_tocsv('./raw/network/hosts/hosts_raw.csv', data['network']['hosts'], 'hosts') #hosts
-#dict_list_tocsv('./raw/network/dns/dns_raw.csv',data['network']['dns']) #dns -> There is an array of dicts inside, it is being saved in a single cell
-#requests = [item['request'] for item in data['network']['dns']] #We can use 'if' inside a comprehension list
-#list_tocsv('./raw/network/dns/requests_raw.csv', requests, 'request') #request
-#dict_list_tocsv('./raw/network/domains/domains_raw.csv',data['network']['domains']) #domains
+"""
+dict_list_tocsv('./raw/network/udp/udp_raw.csv',data['network']['udp']) #udp
+dict_list_tocsv('./raw/network/tcp/tcp_raw.csv',data['network']['tcp']) #tcp
+list_tocsv('./raw/network/hosts/hosts_raw.csv', data['network']['hosts'], 'hosts') #hosts
+dict_list_tocsv('./raw/network/dns/dns_raw.csv',data['network']['dns']) #dns -> There is an array of dicts inside, it is being saved in a single cell
+requests = [item['request'] for item in data['network']['dns']] #We can use 'if' inside a comprehension list
+list_tocsv('./raw/network/dns/requests_raw.csv', requests, 'request') #request
+dict_list_tocsv('./raw/network/domains/domains_raw.csv',data['network']['domains']) #domains
+"""
 
 #procmemory
+"""
 procmemory_file, procmemory_urls, procmemory_pid = ([] for i in range(3))
 for item in data['procmemory']:
-	#procmemory_file.append(item['file']) #One String
-	#procmemory_urls.append(item['urls']) #Array of Arrays of Strings
+	procmemory_file.append(item['file']) #One String
+	procmemory_urls.append(item['urls']) #Array of Arrays of Strings
 	procmemory_pid.append(item['pid']) #Integer 
-#list_tocsv('./raw/procmemory/file/file_raw.csv',procmemory_file,'file')
-#list_tocsv('./raw/procmemory/urls/urls_raw.csv',reduce(lambda x,y: x+y,procmemory_urls),'urls')
+list_tocsv('./raw/procmemory/file/file_raw.csv',procmemory_file,'file')
+list_tocsv('./raw/procmemory/urls/urls_raw.csv',reduce(lambda x,y: x+y,procmemory_urls),'urls')
+"""
 
+#behavior_processes
+"""
+behavior_processes = data['behavior']['processes'] #Array of Objects
+behavior_processes_pid,behavior_processes_processname,behavior_processes_ppid = ([] for i in range(3))
+for item in behavior_processes:
+	behavior_processes_pid.append(item['pid']) #Array of Integers
+	behavior_processes_processname.append(item['process_name']) #Array of Strings
+	behavior_processes_ppid.append(item['ppid']) #Array of Integers
+list_tocsv('./raw/behavior/processes/pid/pid_raw.csv', behavior_processes_pid, 'pid') #pids
+list_tocsv('./raw/behavior/processes/process_name/processname_raw.csv', behavior_processes_processname, 'process_name') #names of processes
+list_tocsv('./raw/behavior/processes/ppid/ppid_raw.csv', behavior_processes_ppid, 'ppid') #ppids
+"""
 
-
-
-
-
+#behavior_summary
+"""
+behavior_summary_filecreated = data['behavior']['summary']['file_created'] #List of strings (files created)
+list_tocsv('./raw/behavior/summary/file_created/filecreated_raw.csv',behavior_summary_filecreated,'file_created')
+behavior_summary_dllloaded = data['behavior']['summary']['dll_loaded'] #List of strings (dll's loaded)
+list_tocsv('./raw/behavior/summary/dll_loaded/dllloaded_raw.csv',behavior_summary_dllloaded,'dll_loaded')
+behavior_summary_regkeyopened = data['behavior']['summary']['regkey_opened'] #List of strings
+list_tocsv('./raw/behavior/summary/regkey_opened/regkeyopened_raw.csv',behavior_summary_regkeyopened,'regkey_opened')
+behavior_summary_commandline = data['behavior']['summary']['command_line'] #List of strings
+list_tocsv('./raw/behavior/summary/command_line/commandline_raw.csv',behavior_summary_commandline,'command_line')
+behavior_summary_regkeyread = data['behavior']['summary']['regkey_read'] #List of strings
+list_tocsv('./raw/behavior/summary/regkey_read/regkeyread_raw.csv',behavior_summary_regkeyread,'regkey_read')
+behavior_summary_regkeywritten = data['behavior']['summary']['regkey_written'] #List of strings
+list_tocsv('./raw/behavior/summary/regkey_written/regkeywritten_raw.csv',behavior_summary_regkeywritten,'regkey_written')
+"""
 
 ##########################################Obtain data################################################
 #procmemory
@@ -84,12 +111,15 @@ behavior_summary_commandline = data['behavior']['summary']['command_line'] #List
 behavior_summary_regkeyread = data['behavior']['summary']['regkey_read'] #List of strings
 behavior_summary_regkeywritten = data['behavior']['summary']['regkey_written'] #List of strings
 """
-########################################Check if data is in the file######################################
+######################################Check if data is present in the file###################################
 #if 'title' in data['glossary']:
 #	print("True")
 #else:
 #	print("False")
 
 #TODO
+#When using the UI to select the features to be used, we can check all the features and just allow those that are in the report.json file to be selected.
+	#This is only possible if the program processes one file at a time (e.g. it chooses the file to be processed)
+	#If we want the program to process dozens of files at the same time, we will not be able to implement this restriction.
 #Check with a conditional statement if the used directories exist. Otherwise, a runtime error will appear.
 #Check if the wanted data exists in the report.json file

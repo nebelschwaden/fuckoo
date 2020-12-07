@@ -5,7 +5,7 @@ from functools import reduce
 #We can modify every json file so that it only contains the features that we want.
 with open('report.json') as f:
 	data  = json.load(f)
-
+df_dataset = pd.DataFrame() #Main dataframe
 #Saves a list of dictionaries to a csv file
 def dict_list_tocsv(filepath, dict_list):
 	df_dict_list = pd.DataFrame(dict_list) #This does not work properly with nested data
@@ -15,6 +15,67 @@ def dict_list_tocsv(filepath, dict_list):
 def list_tocsv(filepath, list, name):
 	series_list = pd.Series(list)
 	series_list.to_csv(filepath, header=[name])
+
+#Translates a list of any primitive datatype to a column in the main dataframe
+def list_tofeature(list, name):
+	df_dataset[name] = pd.Series(list)
+
+#Translates all of the column of a certain dataframe into columns in the main dataframe
+def dict_tofeatures(dict_list):
+	global df_dataset
+	df_dataset = pd.concat([df_dataset,pd.DataFrame(dict_list)], axis=1)
+
+######################################General Dataframe##############################################
+#procmemory
+procmemory_file, procmemory_urls, procmemory_pid = ([] for i in range(3))
+for item in data['procmemory']:
+	procmemory_file.append(item['file']) #One String
+	procmemory_urls.append(item['urls']) #Array of Arrays of Strings
+	procmemory_pid.append(item['pid']) #Integer
+list_tofeature(procmemory_file,'file')
+list_tofeature(reduce(lambda x,y: x+y,procmemory_urls), 'urls')
+list_tofeature(procmemory_pid,'pid')
+
+#network
+dict_tofeatures(data['network']['udp'])
+dict_tofeatures(data['network']['tcp'])
+list_tofeature(data['network']['hosts'],'hosts')
+network_dns = data['network']['dns']
+dict_tofeatures(network_dns)
+network_dns_requests = []
+for item in network_dns:
+	network_dns_requests.append(item['request'])
+list_tofeature(network_dns_requests,'requests')
+dict_tofeatures(data['network']['domains'])
+
+#behavior
+#behavior_processes
+behavior_processes = data['behavior']['processes'] #Array of Objects
+behavior_processes_pid,behavior_processes_processname,behavior_processes_ppid = ([] for i in range(3))
+for item in behavior_processes:
+	behavior_processes_pid.append(item['pid']) #Array of Integers
+	behavior_processes_processname.append(item['process_name']) #Array of Strings
+	behavior_processes_ppid.append(item['ppid']) #Array of Integers
+list_tofeature(behavior_processes_pid,'pid')
+list_tofeature(behavior_processes_processname,'process_name')
+list_tofeature(behavior_processes_ppid,'ppid')
+
+#behavior_summary
+behavior_summary_filecreated = data['behavior']['summary']['file_created'] #List of strings (files created)
+list_tofeature(behavior_summary_filecreated,'file_created')
+behavior_summary_dllloaded = data['behavior']['summary']['dll_loaded'] #List of strings (dll's loaded)
+list_tofeature(behavior_summary_dllloaded,'dll_loaded')
+behavior_summary_regkeyopened = data['behavior']['summary']['regkey_opened'] #List of strings
+list_tofeature(behavior_summary_regkeyopened,'regkey_opened')
+behavior_summary_commandline = data['behavior']['summary']['command_line'] #List of strings
+list_tofeature(behavior_summary_commandline,'command_line')
+behavior_summary_regkeyread = data['behavior']['summary']['regkey_read'] #List of strings
+list_tofeature(behavior_summary_regkeyread,'regkey_read')
+behavior_summary_regkeywritten = data['behavior']['summary']['regkey_written'] #List of strings
+list_tofeature(behavior_summary_regkeywritten,'regkey_written')
+
+df_dataset.to_csv('./raw/raw.csv')
+
 
 
 ##########################################Save to CSV################################################
@@ -123,3 +184,4 @@ behavior_summary_regkeywritten = data['behavior']['summary']['regkey_written'] #
 	#If we want the program to process dozens of files at the same time, we will not be able to implement this restriction.
 #Check with a conditional statement if the used directories exist. Otherwise, a runtime error will appear.
 #Check if the wanted data exists in the report.json file
+#We can concatenate each main dataframe from each report.json file to obtain a final dataframe.

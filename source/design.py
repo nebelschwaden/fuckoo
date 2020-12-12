@@ -144,7 +144,7 @@ class Ui_MainWindow(object):
         self.titleLabel.setText(_translate("MainWindow", "Cuckoo Report Filter"))
 
     def openFile(self):
-        self.report_path =  QFileDialog.getOpenFileName()
+        self.report_path =  QFileDialog.getExistingDirectory(None, 'Select a directory')
         print(self.report_path)
 
     def process_data(self):

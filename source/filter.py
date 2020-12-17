@@ -14,6 +14,9 @@ def dict_tofeatures(dict_list, dataframe):
 	dataframe = pd.concat([dataframe,pd.DataFrame(dict_list)], axis=1)
 	return dataframe
 
+def empty_category(list,dataframe):
+	for x in list:
+		list_tofeature([],x,dataframe)
 #Reading all the files that match a given extension from a directory recursively.
 PATH = './reports/'
 result = [y for x in os.walk(PATH) for y in glob(os.path.join(x[0], '*.json'))]
@@ -22,14 +25,17 @@ result = [y for x in os.walk(PATH) for y in glob(os.path.join(x[0], '*.json'))]
 dataframes = list()
 
 #Selected features
-features = ['procmemory', 'file', 'urls', 'pid', 
+features = ['procmemory', 'file', 'urls', 'proc_pid', 
 'network', 'udp', 'tcp', 'hosts', 'dns', 'request', 'domains', 
 'behavior', 
 'processes', 'pid', 'process_name', 'ppid', 
 'summary', 'file_created', 'dll_loaded', 'regkey_opened', 'command_line', 'regkey_read', 'regkey_written']
 
 def procmemory(features, dataframe, data):
-	available = ['file','urls','pid'] #Repeated 'pid' in behaviour
+	available = ['file','urls','proc_pid']
+	if not 'procmemory' in data:
+		empty_category(available,dataframe)
+		return
 	for x in available:
 		if x in features:
 			procmemory_feature = []
@@ -37,15 +43,29 @@ def procmemory(features, dataframe, data):
 			if x in category[0]:
 				for item in category:
 					procmemory_feature.append(item[x])
-				if x == 'urls': #In this case, there is an array of an arrays.
+				if x == 'urls': #In this case, this is an array of arrays.
 					list_tofeature(reduce(lambda x,y: x+y,procmemory_feature),x,dataframe)
 				else:
 					list_tofeature(procmemory_feature,x,dataframe)
+			elif x=='proc_pid': #Repeated 'pid' in behaviour
+				if 'pid' in category[0]:
+					for item in category:
+						procmemory_feature.append(item['pid'])
+					list_tofeature(procmemory_feature,'proc_pid',dataframe)
+				else:
+					list_tofeature([],'proc_pid',dataframe)	
 			else:
 				list_tofeature([],x,dataframe)
 
 def behavior_processes(features, dataframe, data):
-	available = ['pid','process_name','ppid'] #Repeated 'pid' in procmemory
+	available = ['pid','process_name','ppid'] #Repeated 'pid' in procmemory -> Solved!
+	if not 'behavior' in data:
+		empty_category(available,dataframe)
+		return
+	else:
+		if not 'processes' in data['behavior']:
+			empty_category(available,dataframe)
+			return
 	for x in available:
 		if x in features:
 			beh_process_feature = []
@@ -59,6 +79,13 @@ def behavior_processes(features, dataframe, data):
 
 def behavior_summary(features, dataframe, data):
 	available = ['file_created','dll_loaded','regkey_opened','command_line','regkey_read','regkey_written']
+	if not 'behavior' in data:
+		empty_category(available,dataframe)
+		return
+	else:
+		if not 'summary' in data['behavior']:
+			empty_category(available,dataframe)
+			return
 	for x in available:
 		if x in features:
 			category = data['behavior']['summary']
@@ -67,22 +94,62 @@ def behavior_summary(features, dataframe, data):
 			else:
 				list_tofeature([],x,dataframe)
 
+def network(features, dataframe, data):
+	available = ['udp', 'tcp', 'hosts', 'request', 'domains'] # 'dns' feature deleted
+	if not 'network' in data:
+		empty_category(available,dataframe)
+		return
+	for x in available:
+		if x in features:
+			category = data['network']
+			if x in category:
+				list_tofeature(category[x],x,dataframe)
+			elif x=='request':
+				if 'dns' in category:
+					network_dns_requests = []
+					for item in data['network']['dns']:
+						network_dns_requests.append(item['request'])
+					list_tofeature(network_dns_requests,'requests',df_dataset)
+				else:
+					list_tofeature([],x,dataframe)	
+			else:
+				list_tofeature([],x,dataframe)
+
 for report in result:
 	with open(report) as f:
 		data  = json.load(f)
-	df_dataset = pd.DataFrame()
+	print(report)
+	df_dataset = pd.DataFrame() #A new dataframe is created every time we process a new file.
+								#We can take advantage of this ot put the artifact ID and environment per dataframe.
 
 	#procmemory
 	procmemory(features,df_dataset,data)
 
 	#network
-	#These are hardcoded because they are arrays of dictionaries.
+	#They have their own set of features.
+	########################################DISCLAIMER######################################
+	######################An ID is given to every set of sub_features#######################
 	#The 'concat' function returns a new dataframe.
-	#Data validation is missing here.
+	network(features,df_dataset,data)
+	""" IF NEEDED """
+	"""
+	category = data['network']
 	if 'udp' in features:
-		df_dataset = dict_tofeatures(data['network']['udp'],df_dataset)
-	if 'tcp' in features:	
-		df_dataset = dict_tofeatures(data['network']['tcp'],df_dataset)
+		if 'udp' in category:
+			df_dataset = dict_tofeatures(category['udp'],df_dataset) #If needed
+		else:
+			sub_network = ['src','dst','offset','time','dport','sport']
+			for y in sub_network:
+				list_tofeature([],y,df_dataset)
+
+	if 'tcp' in features:
+		if 'tcp' in category:
+			df_dataset = dict_tofeatures(category['tcp'],df_dataset)
+		else:
+			sub_network = ['src','dst','offset','time','dport','sport']
+			for y in sub_network:
+				list_tofeature([],y,df_dataset)
+
 	if 'hosts' in features:	
 		list_tofeature(data['network']['hosts'],'hosts',df_dataset)
 	if 'request' in features:
@@ -92,6 +159,7 @@ for report in result:
 		list_tofeature(network_dns_requests,'requests',df_dataset)
 	if 'domains' in features:
 		df_dataset = dict_tofeatures(data['network']['domains'],df_dataset)
+	"""
 
 	#behavior
 	#behavior_processes

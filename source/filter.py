@@ -181,6 +181,10 @@ for report in result:
 result  = pd.concat(dataframes)
 result.to_csv('./raw/raw.csv')
 
+
+
+
+
 ##########################################Save to CSV################################################
 #network
 """
@@ -286,9 +290,5 @@ behavior_summary_regkeywritten = data['behavior']['summary']['regkey_written'] #
 	#This is only possible if the program processes one file at a time (e.g. it chooses the file to be processed)
 	#If we want the program to process dozens of files at the same time, we will not be able to implement this restriction.
 #Check with a conditional statement if the used directories exist. Otherwise, a runtime error will appear.
-#Check if the wanted data exists in the report.json file
-#We can concatenate each main dataframe from each report.json file to obtain a final dataframe.
+#Delete the useless 'dataframe' parameter for all functions.
 
-
-#Check the network-tcp
-#Last processed was Processing: /home/nebelschwaden/Documents/Proyecto/Data/Analisis/Ransomware/Encryptor/01. WinXP_SP3/Locky/Experimento 4/reports/report.json

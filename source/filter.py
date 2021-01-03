@@ -5,9 +5,14 @@ import pandas as pd
 from functools import reduce
 from glob import glob
 
+#Dataframe per report
+df_dataset = pd.DataFrame()
+
 #Translates a list of any primitive datatype to a column in the main dataframe
-def list_tofeature(list, name, dataframe):
-	dataframe[name] = pd.Series(list)
+def list_tofeature(values, name, dataframe):
+	global df_dataset
+	df_dataset = pd.concat([df_dataset,pd.DataFrame(pd.Series(values),columns=[name])],axis=1)
+	#dataframe[name] = pd.Series(values)
 
 #Translates all of the column of a certain dataframe into columns in the main dataframe
 def dict_tofeatures(dict_list, dataframe):
@@ -18,7 +23,8 @@ def empty_category(list,dataframe):
 	for x in list:
 		list_tofeature([],x,dataframe)
 #Reading all the files that match a given extension from a directory recursively.
-PATH = './reports/'
+#PATH = './reports/'
+PATH = '/home/nebelschwaden/Documents/Proyecto/Data/Analisis/'
 result = [y for x in os.walk(PATH) for y in glob(os.path.join(x[0], '*.json'))]
 
 #Main dataframe
@@ -118,7 +124,7 @@ def network(features, dataframe, data):
 for report in result:
 	with open(report) as f:
 		data  = json.load(f)
-	print(report)
+	print("Processing: " + str(report))
 	df_dataset = pd.DataFrame() #A new dataframe is created every time we process a new file.
 								#We can take advantage of this ot put the artifact ID and environment per dataframe.
 
@@ -282,3 +288,7 @@ behavior_summary_regkeywritten = data['behavior']['summary']['regkey_written'] #
 #Check with a conditional statement if the used directories exist. Otherwise, a runtime error will appear.
 #Check if the wanted data exists in the report.json file
 #We can concatenate each main dataframe from each report.json file to obtain a final dataframe.
+
+
+#Check the network-tcp
+#Last processed was Processing: /home/nebelschwaden/Documents/Proyecto/Data/Analisis/Ransomware/Encryptor/01. WinXP_SP3/Locky/Experimento 4/reports/report.json

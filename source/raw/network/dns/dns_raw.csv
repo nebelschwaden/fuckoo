@@ -1,0 +1,4 @@
+,type,request,answers
+0,A,dns.msftncsi.com,"[{'data': '131.107.255.255', 'type': 'A'}]"
+1,AAAA,dns.msftncsi.com,"[{'data': 'fd3e:4f5a:5b81::1', 'type': 'AAAA'}]"
+2,A,teredo.ipv6.microsoft.com,[]

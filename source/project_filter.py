@@ -4,8 +4,18 @@ import os
 import pandas as pd
 from functools import reduce
 from glob import glob
+##############################DELETE THIS###################
+
 import time
+import random
+from random import shuffle
 start = time.time()
+
+#res = random.sample(range(520), 40)
+#counter = 0
+
+############################################################
+
 df_dataset = pd.DataFrame()
 
 def list_tofeature(values, name, dataframe):
@@ -23,13 +33,23 @@ def empty_category(list,dataframe):
 #PATH = './reports/'
 PATH = '/home/nebelschwaden/Documents/Proyecto/Data/Analisis/'
 result = [y for x in os.walk(PATH) for y in glob(os.path.join(x[0], '*.json'))]
+###DELETE###
+#shuffle(result)
+############
 dataframes = list()
+
 features = ['procmemory', 'file', 'urls', 'proc_pid', 
 'network', 'udp', 'tcp', 'hosts', 'dns', 'request', 'domains', 
 'behavior', 
 'processes', 'pid', 'process_name', 'ppid', 
 'summary', 'file_created', 'dll_loaded', 'regkey_opened', 'command_line', 'regkey_read', 'regkey_written']
-
+"""
+features = ['procmemory', 'file', 'proc_pid', 
+'network', 'tcp', 'hosts', 'dns', 'domains', 
+'behavior', 
+'processes', 'pid', 'process_name', 'ppid',
+'summary', 'file_created', 'dll_loaded', 'command_line']
+"""
 def procmemory(features, dataframe, data):
 	available = ['file','urls','proc_pid']
 	if not 'procmemory' in data:
@@ -116,6 +136,14 @@ def network(features, dataframe, data):
 
 
 for report in result:
+	##############DELETE THIS#############
+	""""
+	if not counter in res:
+		counter += 1
+		continue
+	counter += 1
+	"""
+	######################################
 	with open(report) as f:
 		data  = json.load(f)
 	print("Processing: " + str(report))
@@ -136,7 +164,16 @@ for report in result:
 	dataframes.append(df_dataset)
 
 final  = pd.concat(dataframes)
-final.to_csv('./raw/log_2.csv', index=False)
+#TODO sort final by artifact
+result_path = './raw/duplicates.csv'
+final.to_csv(result_path, index=False)
 end = time.time()
 print('Runtime:'+str(end - start))
-print('Number of files:'+str(len(result)))
+print('Number of rows:'+str(len(final)))
+
+#TODO Delete duplicates
+#Load csv into dataframe
+#Get unique values from the artifact name column
+#Get sub_dataframe by artifact
+#Delete repeated entries for each column for each sub_dataframe
+#Should ignore the 'N/A' values -> Secuenciamos todos los valores por columna y los ponemos, lo que resta de espacio se llena con N/A

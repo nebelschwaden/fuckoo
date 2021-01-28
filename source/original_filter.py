@@ -53,9 +53,9 @@ dict_tofeatures(data['network']['domains'])
 behavior_processes = data['behavior']['processes'] #Array of Objects
 behavior_processes_pid,behavior_processes_processname,behavior_processes_ppid = ([] for i in range(3))
 for item in behavior_processes:
-	behavior_processes_pid.append(item['pid']) #Array of Integers
-	behavior_processes_processname.append(item['process_name']) #Array of Strings
-	behavior_processes_ppid.append(item['ppid']) #Array of Integers
+	behavior_processes_pid.append(item['pid']) #Single Integer
+	behavior_processes_processname.append(item['process_name']) #Single String
+	behavior_processes_ppid.append(item['ppid']) #Single Integer
 list_tofeature(behavior_processes_pid,'pid')
 list_tofeature(behavior_processes_processname,'process_name')
 list_tofeature(behavior_processes_ppid,'ppid')

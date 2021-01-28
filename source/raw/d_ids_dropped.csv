@@ -1,0 +1,4 @@
+,Unnamed: 0,urls,proc_pid,udp,tcp,hosts,requests,domains,proc,file_created,dll_loaded,regkey_opened,command_line,regkey_read,regkey_written
+0,0,349,0,1,0,1,0,1,16,1393,22,265,0,477,5
+2,2,424,2,2,-1,-1,1,-1,14,751,5,238,11,2800,8
+3,3,374,3,3,-1,-1,-1,-1,11,968,53,291,12,2957,0

@@ -23,7 +23,7 @@ Clone the repository.
 ```
 git clone https://github.com/nebelschwaden/fuckoo
 ```
-Set your current directory to where you clonated the repository, it may depend on your OS.
+Set your current directory to where you cloned the repository, it may depend on your OS.
 ```
 cd /some/directory/fuckoo
 ```

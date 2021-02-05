@@ -6,8 +6,8 @@
 ![GitHub forks](https://img.shields.io/github/forks/nebelschwaden/fuckoo)
 
 Fuckoo is a python script to obtain certain features from any JSON report generated with [Cuckoo Sandbox](https://cuckoosandbox.org/).
-
-Cuckoo Sanbox generates a JSON report for each file it analyses. Fuckoo allows you to process multiple JSON files to create a dataset with some of the most important features.
+Cuckoo Sandbox is a malware analysis tool that lets you analyze malicious files or websites under different  virtualized environments such as Windows, Linux, Android and so forth.
+Cuckoo Sanbox generates a JSON report for each file it analyzes. Fuckoo allows you to process multiple JSON files to create a dataset with some of the most important features which can be used for machine learning.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ Clone the repository.
 ```
 git clone https://github.com/nebelschwaden/fuckoo
 ```
-Set your current directory to where you clonated the repository, it may depend on your OS.
+Set your current directory to where you cloned the repository, it may depend on your OS.
 ```
 cd /some/directory/fuckoo
 ```

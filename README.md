@@ -1,13 +1,13 @@
 # Fuckoo
 
-![GitHub license](https://img.shields.io/badge/license-MIT-red)
-![GitHub contributors](https://img.shields.io/badge/contributors-1-blue)
+![GitHub license](https://img.shields.io/github/license/nebelschwaden/fuckoo?color=brightgreen)
+![GitHub contributors](https://img.shields.io/badge/contributors-1-yellowgreen)
 ![GitHub stars](https://img.shields.io/github/stars/nebelschwaden/fuckoo)
-![GitHub forks](https://img.shields.io/github/forks/nebelschwaden/fuckoo)
+![GitHub forks](https://img.shields.io/github/forks/nebelschwaden/fuckoo?color=orange)
 
-Fuckoo is a python script to obtain certain features from any JSON report generated with [Cuckoo Sandbox](https://cuckoosandbox.org/).
+Fuckoo is a python script which can be used to obtain certain features from any JSON report generated with [Cuckoo Sandbox](https://cuckoosandbox.org/).  
 Cuckoo Sandbox is a malware analysis tool that lets you analyze malicious files or websites under different  virtualized environments such as Windows, Linux, Android and so forth.
-Cuckoo Sanbox generates a JSON report for each file it analyzes. Fuckoo allows you to process multiple JSON files to create a dataset with some of the most important features which can be used for machine learning.
+Cuckoo Sanbox generates a JSON report for each file it analyzes.  Fuckoo allows you to process multiple JSON files to create a dataset with some of the most important features which can be used for machine learning.
 
 ## Prerequisites
 

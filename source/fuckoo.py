@@ -108,6 +108,7 @@ def network(features, dataframe, data):
             else:
                 list_tofeature([],x,dataframe)
 def filter(path, dataset_name):
+    separator = "/" if os.name=="posix" else "\\"
     PATH = path
     result = [y for x in os.walk(PATH) for y in glob(os.path.join(x[0], '*.json'))]
     dataframes = list()
@@ -134,7 +135,7 @@ def filter(path, dataset_name):
         df_dataset.fillna('N/A',inplace=True)
         dataframes.append(df_dataset)
     general  = pd.concat(dataframes)
-    result_path = './raw/'+str(dataset_name)+'.csv'
+    result_path = '.'+separator+str(dataset_name)+'.csv'
     general.to_csv(result_path, index=False)
     print('Dataset created in '+result_path)
 

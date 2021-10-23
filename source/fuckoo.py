@@ -139,17 +139,18 @@ def filter(path, dataset_name):
     general.to_csv(result_path, index=False)
     print('Dataset created in '+result_path)
 
+
 if __name__ == "__main__":
-    if len(sys.argv) >= 2:
-        if isinstance(sys.argv[1],str) and isinstance(sys.argv[2],str):
-            if os.path.exists(sys.argv[1]):
-                if(os.path.isdir(sys.argv[1])):
-                    filter(sys.argv[1], sys.argv[2])
-                else:
-                    print(str(sys.argv[1])+' is not a directory, make sure to use quotation marks around the directory string.')
-            else:
-                print('The directory "'+str(sys.argv[1])+'" does not exist, make sure to use quotation marks around the directory string.')
-        else:
-            print('Enter a valid string!')
-    else:
-        print('Usage: python3 fuckoo.py "/my/directory/with/json/files" "name_of_dataset"')
+    if len(sys.argv) < 3:
+        print('Usage: python3 fuckoo.py "/my/directory/with/json/files" "name_of_dataset_to_be_generated"')
+        sys.exit(0)
+    if not isinstance(sys.argv[1],str) or not isinstance(sys.argv[2],str):
+        print('Enter a valid string!')
+        sys.exit(0)
+    if not os.path.exists(sys.argv[1]):
+        print('The directory "'+str(sys.argv[1])+'" does not exist, make sure to use quotation marks around the directory string.')
+        sys.exit(0)
+    if not os.path.isdir(sys.argv[1]):
+        print(str(sys.argv[1])+' is not a directory, make sure to use quotation marks around the directory string.')
+        sys.exit(0)
+    filter(sys.argv[1], sys.argv[2])
